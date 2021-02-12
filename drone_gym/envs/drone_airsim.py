@@ -225,3 +225,16 @@ class DroneAirsim(gym.Env):
 		self.client.armDisarm(False)
 		self.client.reset()
 		self.client.enableApiControl(False)
+
+	def getDepth(self, raw=False, max_scaled=False):
+		if raw:
+			response = self.client.simGetImages([airsim.ImageRequest("0", airsim.ImageType.DepthPerspective, True, False)])[0]
+			frame = np.array(response.image_data_float)
+			if max_scaled:
+				frame = (255 / np.maximum(np.ones_like(frame), frame)).astype(np.int8)
+			frame = frame.reshape(response.height, response.width)
+		else:
+			response = self.client.simGetImages([airsim.ImageRequest("0", airsim.ImageType.DepthPerspective, False, False)])[0]
+			frame = airsim.string_to_uint8_array(response.image_data_uint8)
+			frame = frame.reshape(response.height, response.width, 3)
+		return frame
