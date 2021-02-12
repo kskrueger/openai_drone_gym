@@ -11,7 +11,7 @@ class DroneAirsim(gym.Env):
 	metadata = {'render.modes': ['human']}
 	reward_range = (-float(100),float(100))
 
-	def __init__(self, ip='10.2.36.125', port=41451, image_shape=[256,256], pose_offset=[0,0], hover_height=-1.2):
+	def __init__(self, ip='localhost', port=41451, image_shape=[256,256], pose_offset=[0,0], hover_height=-1.2):
 
 		"""
 		:pose_offset: Spawn at a different start position(By default AirSim spawns the drone where player start object
