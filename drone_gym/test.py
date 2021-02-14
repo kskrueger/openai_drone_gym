@@ -1,4 +1,3 @@
-import cv2
 import gym
 
 
@@ -10,13 +9,13 @@ import argparse
 from stable_baselines3 import DQN
 from stable_baselines3.dqn import MlpPolicy
 
-env = gym.make('airsim-drone-v0')
-env._max_episode_steps = 1
+env = gym.make('airsim-drone-v0', goal=[10, 10])
+# env._max_episode_steps = 1
 
 model = DQN(MlpPolicy, env,  buffer_size=2500, verbose=1)
 model.learn(total_timesteps=100, log_interval=4)
 
-model = DQN.load("dqn_pendulum")
+model = DQN.load("dqn_mlp")
 
 obs = env.reset()
 while True:
@@ -24,10 +23,11 @@ while True:
     print("Predict action: ", action)
     obs, reward, done, info = env.step(action)
     print("Reward: ", reward)
-    print("Obs: ", obs)
+    # print("Obs: ", obs)
     # cv2.waitKey(1)
     # env.render()
-    model.save("dqn_pendulum")
+    # model.save("dqn_cnn")
+    model.save("dqn_mlp")
     if done:
-      obs = env.reset()
+        obs = env.reset()
 

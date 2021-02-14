@@ -10,7 +10,7 @@ from PIL import Image
 class DroneAirsim(gym.Env):
 
 	metadata = {'render.modes': ['human']}
-	reward_range = (-float(100),float(100))
+	reward_range = (-float(100), float(100))
 
 	def __init__(self, ip='localhost', port=41451, image_shape=None, pose_offset=None, hover_height=-1.2, goal=None):
 
@@ -84,13 +84,11 @@ class DroneAirsim(gym.Env):
 		return init_time
 
 	def yaw_left(self):
-
 		self.client.rotateByYawRateAsync(-self.yaw_degrees, self.action_duration)
 		init_time = time.time()
 		return init_time
 
 	def take_action(self, action):
-
 		collided = False
 		frame_buffer = []  # Collects all frames captured while doing action
 		prev_pose = self.getPose()
@@ -131,11 +129,10 @@ class DroneAirsim(gym.Env):
 		return prev_pose, frame_buffer, collided
 
 	def process_frame(self, response):
-
 		frame = airsim.string_to_uint8_array(response.image_data_uint8)
 		try:
 			frame = frame.reshape(self.img_shape[0], self.img_shape[1], 3)
-		except ValueError:															# Bug with client.simGetImages:randomly drops Image response sometimes
+		except ValueError:  # Bug with client.simGetImages:randomly drops Image response sometimes
 			frame = np.zeros((self.img_shape[0], self.img_shape[1]))
 			self.dropped_frames += 1
 			return frame
@@ -147,9 +144,7 @@ class DroneAirsim(gym.Env):
 	def stackFrames(self, *args, init_state=False):
 
 		if init_state:
-			response = self.client.simGetImages([
-				airsim.ImageRequest("0", airsim.ImageType.Scene, False, False)
-			])[0]
+			response = self.client.simGetImages([airsim.ImageRequest("0", airsim.ImageType.Scene, False, False)])[0]
 
 			assert response.height == self.img_shape[0] and response.width == self.img_shape[1], "Input Image size from airsim settings.json and env doesn't match"
 
